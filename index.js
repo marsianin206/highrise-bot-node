@@ -14,6 +14,7 @@ const bot = new Highrise({
     "chatMessageCreate",
     "playerJoin",
     "playerLeave",
+    "emoteCreate",
     "error"
   ]
 });
@@ -28,21 +29,47 @@ bot.on("ready", (session) => {
 // Событие: Новое сообщение в чате
 bot.on("chatMessageCreate", (user, message) => {
   console.log(`[Чат] ${user.username}: ${message}`);
+  const msg = message.toLowerCase();
 
   // Команда !ping
-  if (message.toLowerCase() === "!ping") {
+  if (msg === "!ping") {
     bot.message.send(`Pong! 🏓`);
   }
 
   // Команда !help
-  if (message.toLowerCase() === "!help") {
-    bot.message.send(`Доступные команды: !ping, !help, !about`);
+  if (msg === "!help") {
+    bot.message.send(`Доступные команды: !ping, !help, !about, !users`);
   }
 
   // Команда !about
-  if (message.toLowerCase() === "!about") {
+  if (msg === "!about") {
     bot.message.send(`Я бот для Highrise, написанный на Node.js! 🤖`);
   }
+
+  // Команда !users
+  if (msg === "!users") {
+    bot.room.players.get().then(players => {
+      bot.message.send(`Сейчас в комнате: ${players.length} игроков. 👥`);
+    }).catch(err => {
+      console.error("Ошибка при получении списка игроков:", err);
+    });
+  }
+
+  // Реакция на упоминание "бот"
+  if (msg.includes("бот") || msg.includes("bot")) {
+    bot.message.send(`Вы звали меня, @${user.username}? Я тут! 👋`);
+  }
+});
+
+// Событие: Игрок использует эмоцию (танец и т.д.)
+bot.on("emoteCreate", (user, receiver, emote_id) => {
+  console.log(`${user.username} использовал эмоцию: ${emote_id}`);
+  
+  // Бот повторяет эмоцию за игроком (авто-танец)
+  // Мы не проверяем ID бота, так как SDK обычно не присылает события от самого себя в этот обработчик
+  bot.player.emote(emote_id).catch(err => {
+    console.error("Ошибка при выполнении эмоции:", err);
+  });
 });
 
 // Событие: Игрок зашел в комнату
