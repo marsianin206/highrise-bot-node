@@ -10,16 +10,17 @@ if (!process.env.BOT_TOKEN || !process.env.ROOM_ID) {
   process.exit(1);
 }
 
-// Инициализация бота
+// Инициализация бота с правильными названиями событий для highrise.sdk.dev
 const bot = new Highrise({
-  events: [
-    "ready",
-    "chatMessageCreate",
-    "playerJoin",
-    "playerLeave",
-    "emoteCreate"
+  Events: [
+    "SessionMetadata",
+    "ChatEvent",
+    "UserJoinedEvent",
+    "UserLeftEvent",
+    "EmoteEvent",
+    "Error"
   ],
-  reconnect: 5 // Авто-переподключение каждые 5 секунд при разрыве
+  reconnect: 5
 });
 
 // Инициализация менеджера команд
@@ -43,21 +44,23 @@ bot.on("ready", (session) => {
   console.log(`[Бот] Онлайн! Комната: ${session.room_info.room_name}`);
 });
 
-bot.on("chatMessageCreate", (user, message) => {
+// В highrise.sdk.dev событие чата называется chatCreate
+bot.on("chatCreate", (user, message) => {
   console.log(`[Чат] ${user.username || user}: ${message}`);
   
   // Передаем сообщение в менеджер команд
   commandManager.handleCommand(user, message);
 
-  // Дополнительная логика (реакция на слово "бот")
+  // Реакция на слово "бот"
   const msg = message.toLowerCase();
   if (msg.includes("бот") || msg.includes("bot")) {
     bot.chat.send(`Вы звали меня, @${user.username || user}? Я тут! 👋`);
   }
 });
 
-bot.on("emoteCreate", (user, receiver, emote_id) => {
-  console.log(`[Эмоция] ${user.username} -> ${emote_id}`);
+// В highrise.sdk.dev событие эмоции называется playerEmote
+bot.on("playerEmote", (sender, receiver, emote_id) => {
+  console.log(`[Эмоция] ${sender.username} -> ${emote_id}`);
   // Авто-повтор эмоции
   bot.player.emote(emote_id).catch(() => {});
 });
@@ -71,9 +74,8 @@ bot.on("playerLeave", (user) => {
   console.log(`[Выход] ${user.username} покинул комнату.`);
 });
 
-// Обработка ошибок в новом SDK
 bot.on("error", (error) => {
-  console.error("[Бот] Критическая ошибка:", error);
+  console.error("[Бот] Ошибка:", error);
 });
 
 // Запуск
