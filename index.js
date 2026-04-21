@@ -11,11 +11,10 @@ if (!process.env.BOT_TOKEN || !process.env.ROOM_ID) {
 const bot = new Highrise({
   events: [
     "ready",
-    "chatMessageCreate",
+    "messages",
     "playerJoin",
     "playerLeave",
-    "emoteCreate",
-    "error"
+    "emoteCreate"
   ]
 });
 
@@ -27,7 +26,7 @@ bot.on("ready", (session) => {
 });
 
 // Событие: Новое сообщение в чате
-bot.on("chatMessageCreate", (user, message) => {
+bot.on("messages", (user, message) => {
   console.log(`[Чат] ${user.username}: ${message}`);
   const msg = message.toLowerCase();
 
