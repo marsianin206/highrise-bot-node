@@ -2,8 +2,8 @@ require('dotenv').config();
 const { Highrise } = require("highrise-js-sdk");
 
 // Проверяем наличие переменных окружения
-if (!process.env.HIGHRISE_TOKEN || !process.env.HIGHRISE_ROOM_ID) {
-  console.error("Ошибка: HIGHRISE_TOKEN или HIGHRISE_ROOM_ID не установлены в файле .env");
+if (!process.env.BOT_TOKEN || !process.env.ROOM_ID) {
+  console.error("Ошибка: BOT_TOKEN или ROOM_ID не установлены в файле .env");
   process.exit(1);
 }
 
@@ -89,4 +89,4 @@ bot.on("error", (error) => {
 });
 
 // Запуск бота
-bot.login(process.env.HIGHRISE_TOKEN, process.env.HIGHRISE_ROOM_ID);
+bot.login(process.env.BOT_TOKEN, process.env.ROOM_ID);
