@@ -26,8 +26,8 @@ bot.on("ready", (session) => {
 });
 
 // Событие: Новое сообщение в чате
-bot.on("messages", (user, message) => {
-  console.log(`[Чат] ${user.username}: ${message}`);
+bot.on("chatMessageCreate", (user, message) => {
+  console.log(`[Чат] ${user.username || user}: ${message}`);
   const msg = message.toLowerCase();
 
   // Команда !ping
@@ -56,7 +56,7 @@ bot.on("messages", (user, message) => {
 
   // Реакция на упоминание "бот"
   if (msg.includes("бот") || msg.includes("bot")) {
-    bot.message.send(`Вы звали меня, @${user.username}? Я тут! 👋`);
+    bot.message.send(`Вы звали меня, @${user.username || user}? Я тут! 👋`);
   }
 });
 
