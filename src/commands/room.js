@@ -1,5 +1,5 @@
 module.exports = {
-  name: "users",
+  name: "room",
   async execute(bot, user, message, args) {
     try {
       const users = await bot.room.players.get();
@@ -7,7 +7,7 @@ module.exports = {
       for (const u of users || []) {
         if (u[0].username) count++;
       }
-      bot.message.send("Players: " + count + " 👥");
+      bot.message.send("Players: " + count);
     } catch (e) {
       bot.message.send("Error");
     }
